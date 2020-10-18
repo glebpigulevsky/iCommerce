@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from 'react'
 import { Card } from 'react-bootstrap'
-
+import Rating from './Rating';
 interface Props {
   product: {
     _id: string;
@@ -16,7 +16,7 @@ interface Props {
   }
 }
 
-const Product: FunctionComponent<Props> = ( {product} ) => {
+const Product: FunctionComponent<Props> = ({ product }) => {
   return (
     <Card className='my-3 p-3 rounded'>
       <a href={`/product/${product._id}`}>
@@ -24,14 +24,12 @@ const Product: FunctionComponent<Props> = ( {product} ) => {
       </a>
       <Card.Body>
         <a href={`/product/${product._id}`}>
-  <Card.Title as ='div'><strong>{product.name}</strong></Card.Title>
+          <Card.Title as='div'><strong>{product.name}</strong></Card.Title>
         </a>
         <Card.Text as='div'>
-          <div className='my-3'>
-            {product.rating} from {product.numReviews} reviews
-          </div>
+          <Rating value={product.rating} text={`${product.numReviews} reviews`} />
         </Card.Text>
-  <Card.Text as ='h3'>${product.price}</Card.Text>
+        <Card.Text as='h3'>${product.price}</Card.Text>
       </Card.Body>
     </Card>
   )
