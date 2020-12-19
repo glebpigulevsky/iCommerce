@@ -30,10 +30,10 @@ jobs:
   checkout_code:
     executor: cypress
     steps:
-      -checkout
-      -restore_yarn_install
-      -restore_cypress_install
-      -yarn_install
+      - checkout
+      - restore_yarn_install
+      - restore_cypress_install
+      - yarn_install
       - save_cache:
           key: yarn-modules-{{ checksum "yarn.lock"}}
           path:
