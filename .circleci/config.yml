@@ -6,7 +6,7 @@ workflows:
     jobs:
       - node/test
 jobs:
-  build:
+  test:
     environment:
       CC_TEST_REPORTER_ID: 3498ce0f780b1fdddb255c461daea02ad3fbbc20b03f3c889390d01db9b00863
     docker:
