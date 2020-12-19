@@ -36,7 +36,7 @@ jobs:
       - yarn_install
       - save_cache:
           key: yarn-modules-{{ checksum "yarn.lock"}}
-          path:
+          paths:
             - ./node_modules
       - save_cache:
           key: cypress-{{ checksum "yarn.lock" }}
@@ -66,11 +66,10 @@ jobs:
 
 workflows:
   version: 2
-  node-tests:
-    jobs:
-      - node/test
   main:
     jobs:
+      - checkout_code:
+          context: artifactory
       - test:
           requires:
             - checkout_code
