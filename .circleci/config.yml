@@ -6,16 +6,6 @@ executors:
           TERM: xterm
     working_directory: ~/iCommerce
 
-orbs:
-  aws-cli: circleci/aws-cli@1.0.0
-
-commands:
-  restore_yarn_install:
-    steps:
-      - restore_cache:
-        name: Restore Cache [yarn install]
-        key: yarn-modules-{{checksum "yarn-lock"}}
-
 version: 2.1
 orbs:
   node: circleci/node@3.0.0
@@ -23,51 +13,37 @@ workflows:
   node-tests:
     jobs:
       - node/test
-version: 2.1
 jobs:
-  checkout_code:
-    executor: cypress
-    steps:
-      - checkout
-      - restore_yarn_install
-      - restore_cypress_install
-      - yarn_install
-      - save_cache:
-          key: yarn-modules-{{ checksum "yarn.lock" }}
-          paths:
-          - ./node_modules
-      - save_cache:
-          key: cypress-{{ checksum "yarn.lock" }}
-          paths:
-          - ~/.cache
-  lint:
-    executor: cypress
-    steps:
-      - checkout
-      - restore_yarn_install
-      - run: yarn lint
-  check_types:
-    executor: cypress
-    steps:
-      - checkout
-      - restore_yarn_install
-      - run: yarn types:check
   test:
     executor: cypress
     environment:
       CC_TEST_REPORTER_ID: 3498ce0f780b1fdddb255c461daea02ad3fbbc20b03f3c889390d01db9b00863
+    docker:
+      - image: "mileschou/xdebug:7.3"
+    working_directory: ~/iCommerce
     steps:
       - checkout
-      - restore_yarn_install
+      - run:
+          name: Setup dependencies
+          command: |
+            sudo composer self-update
+            composer install -n --prefer-dist
       - run:
           name: Setup Code Climate test-reporter
           command: |
             curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
             chmod +x ./cc-test-reporter
-      -run:
+      - run:
+          name: Run tests
+          command: |
+            sudo docker-php-ext-enable xdebug
+            ./cc-test-reporter before-build
+            sudo vendor/bin/phpunit --coverage-clover clover.xml
+            ./cc-test-reporter after-build --coverage-input-type clover --exit-code $?
+      - run:
           name: Run coverage tests
           command: yarn test-coverage
-      -run:
+      - run:
           name: Upload code coverage
           command: |
             ./cc-test-reporter format-coverage -t lcov -o build/logs/coverage-final.json build/logs/lcov.info
