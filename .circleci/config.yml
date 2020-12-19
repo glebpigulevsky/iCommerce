@@ -68,8 +68,7 @@ workflows:
   version: 2
   main:
     jobs:
-      - checkout_code:
-          context: artifactory
+      - checkout_code
       - test:
           requires:
             - checkout_code
