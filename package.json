@@ -19,6 +19,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
+    "test-coverage": "react-scripts test --collectCoverage --coverageDirectory ./build/logs --watchAll=false --maxWorkers 4",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
