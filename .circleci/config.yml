@@ -57,7 +57,7 @@ jobs:
             ./cc-test-reporter before-build
       - run:
           name: Run coverage tests
-          command: npm test-coverage
+          command: npm run test-coverage
       - run:
           name: Upload code coverage
           command: |
