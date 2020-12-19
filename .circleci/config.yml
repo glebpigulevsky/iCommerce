@@ -6,6 +6,9 @@ executors:
           TERM: xterm
     working_directory: ~/iCommerce
 
+orbs:
+  aws-cli: circleci/aws-cli@1.0.0
+
 commands:
   restore_yarn_install:
     steps:
@@ -22,6 +25,33 @@ workflows:
       - node/test
 version: 2.1
 jobs:
+  checkout_code:
+    executor: cypress
+    steps:
+      - checkout
+      - restore_yarn_install
+      - restore_cypress_install
+      - yarn_install
+      - save_cache:
+          key: yarn-modules-{{ checksum "yarn.lock" }}
+          paths:
+          - ./node_modules
+      - save_cache:
+          key: cypress-{{ checksum "yarn.lock" }}
+          paths:
+          - ~/.cache
+  lint:
+    executor: cypress
+    steps:
+      - checkout
+      - restore_yarn_install
+      - run: yarn lint
+  check_types:
+    executor: cypress
+    steps:
+      - checkout
+      - restore_yarn_install
+      - run: yarn types:check
   test:
     executor: cypress
     environment:
