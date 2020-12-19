@@ -15,11 +15,7 @@ commands:
 
 version: 2.1
 orbs:
-  node: circleci/node@3.0.0
-workflows:
-  node-tests:
-    jobs:
-      - node/test
+  aws-cli: circleci/aws-cli@1.0.0
 jobs:
   test:
     executor: cypress
