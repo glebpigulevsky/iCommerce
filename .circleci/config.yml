@@ -5,6 +5,3 @@ workflows:
   node-tests:
     jobs:
       - node/test
-        filters:
-          paths:
-            - ~/frontend
