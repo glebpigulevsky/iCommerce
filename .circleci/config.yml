@@ -42,7 +42,7 @@ jobs:
           key: cypress-{{ checksum "yarn.lock" }}
           paths:
             - ~/.cache
-  test:
+  node/test:
     executor: cypress
     environment:
       CC_TEST_REPORTER_ID: 3498ce0f780b1fdddb255c461daea02ad3fbbc20b03f3c889390d01db9b00863
@@ -57,7 +57,7 @@ jobs:
             ./cc-test-reporter before-build
       - run:
           name: Run coverage tests
-          command: yarn run test-coverage
+          command: npm run test-coverage
       - run:
           name: Upload code coverage
           command: |
@@ -66,9 +66,8 @@ jobs:
 
 workflows:
   version: 2
-  main:
-    jobs:
-      - checkout_code
-      - test:
-          requires:
-            - checkout_code
+  jobs:
+    - checkout_code
+    - node/test:
+        requires:
+          - checkout_code
