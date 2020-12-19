@@ -1,3 +1,7 @@
+[![Maintainability](https://api.codeclimate.com/v1/badges/023c22793da9047b2c66/maintainability)](https://codeclimate.com/github/CasperCarver/iCommerce/maintainability)
+
+[![Test Coverage](https://api.codeclimate.com/v1/badges/023c22793da9047b2c66/test_coverage)](https://codeclimate.com/github/CasperCarver/iCommerce/test_coverage)
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
