@@ -31,10 +31,10 @@ jobs:
             ./cc-test-reporter before-build
             sudo vendor/bin/phpunit --coverage-clover clover.xml
             ./cc-test-reporter after-build --coverage-input-type clover --exit-code $?
-      -run:
+      - run:
           name: Run coverage tests
           command: yarn test-coverage
-      -run:
+      - run:
           name: Upload code coverage
           command: |
             ./cc-test-reporter format-coverage -t lcov -o build/logs/coverage-final.json build/logs/lcov.info
