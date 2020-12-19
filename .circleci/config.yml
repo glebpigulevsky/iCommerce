@@ -13,9 +13,10 @@ commands:
           name: Restore Cache [yarn install]
           key: yarn-modules-{{ checksum "yarn.lock" }}
 
-version: 2.1
 orbs:
   aws-cli: circleci/aws-cli@1.0.0
+
+version: 2.1
 jobs:
   test:
     executor: cypress
