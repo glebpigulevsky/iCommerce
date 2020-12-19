@@ -6,6 +6,13 @@ executors:
           TERM: xterm
     working_directory: ~/iCommerce
 
+commands:
+  restore_yarn_install:
+    steps:
+      - restore_cache:
+        name: Restore Cache [yarn install]
+        key: yarn-modules-{{checksum "yarn-lock"}}
+
 version: 2.1
 orbs:
   node: circleci/node@3.0.0
@@ -21,11 +28,7 @@ jobs:
       CC_TEST_REPORTER_ID: 3498ce0f780b1fdddb255c461daea02ad3fbbc20b03f3c889390d01db9b00863
     steps:
       - checkout
-      - run:
-          name: Setup dependencies
-          command: |
-            sudo composer self-update
-            composer install -n --prefer-dist
+      - restore_yarn_install
       - run:
           name: Setup Code Climate test-reporter
           command: |
