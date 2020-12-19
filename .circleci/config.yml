@@ -12,12 +12,36 @@ commands:
       - restore_cache:
           name: Restore Cache [yarn install]
           key: yarn-modules-{{ checksum "yarn.lock" }}
-
+  restore_cypress_install:
+    steps:
+      - restore_cache:
+          name: Restore Cache [cypress]
+          key: cypress-{{ checksum "yarn.lock" }}
+  yarn_install:
+    steps:
+      - run:
+          name: Install dep
+          command: yarn install
 orbs:
-  aws-cli: circleci/aws-cli@1.0.0
+  node: circleci/node@3.0.0
 
 version: 2.1
 jobs:
+  checkout_code:
+    executor: cypress
+    steps:
+      -checkout
+      -restore_yarn_install
+      -restore_cypress_install
+      -yarn_install
+      - save_cache:
+          key: yarn-modules-{{ checksum "yarn.lock"}}
+          path:
+            - ./node_modules
+      - save_cache:
+          key: cypress-{{ checksum "yarn.lock" }}
+          paths:
+            - ~/.cache
   test:
     executor: cypress
     environment:
@@ -39,3 +63,14 @@ jobs:
           command: |
             ./cc-test-reporter format-coverage -t lcov -o build/logs/coverage-final.json build/logs/lcov.info
             ./cc-test-reporter upload-coverage -i build/logs/coverage-final.json
+
+workflows:
+  version: 2
+  node-tests:
+    jobs:
+      - node/test
+  main:
+    jobs:
+      - test:
+          requires:
+            - checkout_code
