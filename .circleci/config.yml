@@ -11,7 +11,7 @@ jobs:
       CC_TEST_REPORTER_ID: 3498ce0f780b1fdddb255c461daea02ad3fbbc20b03f3c889390d01db9b00863
     docker:
       - image: "mileschou/xdebug:7.3"
-    working_directory: ~/repo
+    working_directory: ~/iCommerce
     steps:
       - checkout
       - run:
