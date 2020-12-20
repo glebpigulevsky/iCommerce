@@ -64,10 +64,10 @@ jobs:
             ./cc-test-reporter format-coverage -t lcov -o build/logs/coverage-final.json build/logs/lcov.info
             ./cc-test-reporter upload-coverage -i build/logs/coverage-final.json
 workflows:
-  version: 2.1
+  version: 2
   main:
     jobs:
-      - checkout_code:
+      - checkout_code
       - test:
           requires:
             - checkout_code
