@@ -81,7 +81,7 @@ workflows:
   version: 2
   main:
     jobs:
-      - checkout_code:
+      - checkout_code
       - lint:
           requires:
             - checkout_code
