@@ -6,6 +6,9 @@ executors:
           TERM: xterm
     working_directory: ~/iCommerce
 
+orbs:
+  aws-cli: circleci/aws-cli@1.0.0
+
 commands:
   restore_yarn_install:
     steps:
@@ -19,13 +22,11 @@ commands:
           key: cypress-{{ checksum "yarn.lock" }}
   yarn_install:
     steps:
+      - setup_npmrc
       - run:
-          name: Install dep
+          name: Install Dependencies
           command: yarn install
-orbs:
-  node: circleci/node@3.0.0
 
-version: 2.1
 jobs:
   checkout_code:
     executor: cypress
@@ -35,14 +36,26 @@ jobs:
       - restore_cypress_install
       - yarn_install
       - save_cache:
-          key: yarn-modules-{{ checksum "yarn.lock"}}
+          key: yarn-modules-{{ checksum "yarn.lock" }}
           paths:
             - ./node_modules
       - save_cache:
           key: cypress-{{ checksum "yarn.lock" }}
           paths:
             - ~/.cache
-  node/test:
+  lint:
+    executor: cypress
+    steps:
+      - checkout
+      - restore_yarn_install
+      - run: yarn lint
+  check_types:
+    executor: cypress
+    steps:
+      - checkout
+      - restore_yarn_install
+      - run: yarn types:check
+  test:
     executor: cypress
     environment:
       CC_TEST_REPORTER_ID: 3498ce0f780b1fdddb255c461daea02ad3fbbc20b03f3c889390d01db9b00863
@@ -56,8 +69,8 @@ jobs:
             chmod +x ./cc-test-reporter
             ./cc-test-reporter before-build
       - run:
-          name: Run coverage tests
-          command: npm run test-coverage
+          name: Run unit tests
+          command: yarn test-coverage
       - run:
           name: Upload code coverage
           command: |
@@ -66,8 +79,15 @@ jobs:
 
 workflows:
   version: 2
-  jobs:
-    - checkout_code
-    - node/test:
-        requires:
-          - checkout_code
+  main:
+    jobs:
+      - checkout_code:
+      - lint:
+          requires:
+            - checkout_code
+      - check_types:
+          requires:
+            - checkout_code
+      - test:
+          requires:
+            - checkout_code
