@@ -6,9 +6,6 @@ executors:
           TERM: xterm
     working_directory: ~/iCommerce
 
-orbs:
-  aws-cli: circleci/aws-cli@1.0.0
-
 commands:
   restore_yarn_install:
     steps:
@@ -20,41 +17,33 @@ commands:
       - restore_cache:
           name: Restore Cache [cypress]
           key: cypress-{{ checksum "yarn.lock" }}
+          
   yarn_install:
     steps:
       - setup_npmrc
       - run:
-          name: Install Dependencies
+          name: Install dep
           command: yarn install
+orbs:
+  node: circleci/node@3.0.0
 
+version: 2.1
 jobs:
   checkout_code:
     executor: cypress
     steps:
-      - checkout
-      - restore_yarn_install
-      - restore_cypress_install
-      - yarn_install
+      -checkout
+      -restore_yarn_install
+      -restore_cypress_install
+      -yarn_install
       - save_cache:
-          key: yarn-modules-{{ checksum "yarn.lock" }}
-          paths:
+          key: yarn-modules-{{ checksum "yarn.lock"}}
+          path:
             - ./node_modules
       - save_cache:
           key: cypress-{{ checksum "yarn.lock" }}
           paths:
             - ~/.cache
-  lint:
-    executor: cypress
-    steps:
-      - checkout
-      - restore_yarn_install
-      - run: yarn lint
-  check_types:
-    executor: cypress
-    steps:
-      - checkout
-      - restore_yarn_install
-      - run: yarn types:check
   test:
     executor: cypress
     environment:
@@ -69,7 +58,7 @@ jobs:
             chmod +x ./cc-test-reporter
             ./cc-test-reporter before-build
       - run:
-          name: Run unit tests
+          name: Run coverage tests
           command: yarn test-coverage
       - run:
           name: Upload code coverage
@@ -78,16 +67,9 @@ jobs:
             ./cc-test-reporter upload-coverage -i build/logs/coverage-final.json
 
 workflows:
-  version: 2
+  version: 2.1
   main:
     jobs:
-      - checkout_code
-      - lint:
-          requires:
-            - checkout_code
-      - check_types:
-          requires:
-            - checkout_code
       - test:
           requires:
             - checkout_code
