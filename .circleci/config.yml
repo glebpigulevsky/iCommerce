@@ -17,10 +17,8 @@ commands:
       - restore_cache:
           name: Restore Cache [cypress]
           key: cypress-{{ checksum "yarn.lock" }}
-          
   yarn_install:
     steps:
-      - setup_npmrc
       - run:
           name: Install dep
           command: yarn install
@@ -32,13 +30,13 @@ jobs:
   checkout_code:
     executor: cypress
     steps:
-      -checkout
-      -restore_yarn_install
-      -restore_cypress_install
-      -yarn_install
+      - checkout
+      - restore_yarn_install
+      - restore_cypress_install
+      - yarn_install
       - save_cache:
           key: yarn-modules-{{ checksum "yarn.lock"}}
-          path:
+          paths:
             - ./node_modules
       - save_cache:
           key: cypress-{{ checksum "yarn.lock" }}
@@ -65,11 +63,12 @@ jobs:
           command: |
             ./cc-test-reporter format-coverage -t lcov -o build/logs/coverage-final.json build/logs/lcov.info
             ./cc-test-reporter upload-coverage -i build/logs/coverage-final.json
-
 workflows:
   version: 2.1
   main:
     jobs:
+      - checkout_code:
+          context: artifactory
       - test:
           requires:
             - checkout_code
