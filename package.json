@@ -2,6 +2,7 @@
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://localhost:5001",
   "dependencies": {
     "@babel/runtime": "^7.12.5",
     "@testing-library/jest-dom": "^5.11.6",
@@ -10,6 +11,7 @@
     "@testing-library/user-event": "^7.1.2",
     "@types/jest": "^26.0.14",
     "@types/react-router-dom": "^5.1.6",
+    "axios": "^0.24.0",
     "babel-core": "^6.26.3",
     "jest-dom": "^4.0.0",
     "react": "^16.13.1",
